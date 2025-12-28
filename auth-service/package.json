@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "Bookzilla auth-service",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "jest"
   },
-  "keywords": ["bookstore", "microservice"],
+  "keywords": [
+    "bookstore",
+    "microservice"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -18,7 +22,8 @@
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
     "express-rate-limit": "^7.1.5",
-    "express-validator": "^7.0.1"
+    "express-validator": "^7.0.1",
+    "@bookzilla/shared": "workspace:*"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",

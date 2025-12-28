@@ -1,0 +1,7 @@
+{
+  "name": "bookzilla",
+  "packageManager": "pnpm@10.0.0",
+  "devDependencies": {
+    "turbo": "^2.7.2"
+  }
+}

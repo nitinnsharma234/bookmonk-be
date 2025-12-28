@@ -40,7 +40,11 @@ services:
 
   # API Gateway
   api-gateway:
-    build: ./api-gateway
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3000:3000"
     environment:
@@ -51,12 +55,16 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./api-gateway:/app
-      - /app/node_modules
+      - ./api-gateway/src:/app/api-gateway/src
+      - ./packages:/app/packages
 
   # Auth Service
   auth-service:
-    build: ./auth-service
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3001:3001"
     environment:
@@ -68,12 +76,16 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./auth-service:/app
-      - /app/node_modules
+      - ./auth-service/src:/app/auth-service/src
+      - ./packages:/app/packages
 
   # Catalog Service
   catalog-service:
-    build: ./catalog-service
+    build:
+      context: .
+      dockerfile: catalog-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3002:3002"
     environment:
@@ -85,12 +97,16 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./catalog-service:/app
-      - /app/node_modules
+      - ./catalog-service/src:/app/catalog-service/src
+      - ./packages:/app/packages
 
   # Cart Service
   cart-service:
-    build: ./cart-service
+    build:
+      context: .
+      dockerfile: cart-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3003:3003"
     environment:
@@ -101,12 +117,16 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./cart-service:/app
-      - /app/node_modules
+      - ./cart-service/src:/app/cart-service/src
+      - ./packages:/app/packages
 
   # Order Service
   order-service:
-    build: ./order-service
+    build:
+      context: .
+      dockerfile: order-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3004:3004"
     environment:
@@ -118,12 +138,16 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./order-service:/app
-      - /app/node_modules
+      - ./order-service/src:/app/order-service/src
+      - ./packages:/app/packages
 
   # Payment Service
   payment-service:
-    build: ./payment-service
+    build:
+      context: .
+      dockerfile: payment-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3005:3005"
     environment:
@@ -134,12 +158,16 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./payment-service:/app
-      - /app/node_modules
+      - ./payment-service/src:/app/payment-service/src
+      - ./packages:/app/packages
 
   # Notification Service
   notification-service:
-    build: ./notification-service
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3006:3006"
     environment:
@@ -150,12 +178,16 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./notification-service:/app
-      - /app/node_modules
+      - ./notification-service/src:/app/notification-service/src
+      - ./packages:/app/packages
 
   # Review Service
   review-service:
-    build: ./review-service
+    build:
+      context: .
+      dockerfile: review-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3007:3007"
     environment:
@@ -166,12 +198,17 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./review-service:/app
-      - /app/node_modules
+      - ./review-service/src:/app/review-service/src
+      - ./packages:/app/packages
 
   # User Service
+  # User Service
   user-service:
-    build: ./user-service
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3008:3008"
     environment:
@@ -182,12 +219,15 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./user-service:/app
-      - /app/node_modules
-
-  # Admin Service
+      - ./user-service/src:/app/user-service/src
+      - ./packages:/app/packages
+    # Admin Service
   admin-service:
-    build: ./admin-service
+    build:
+      context: .
+      dockerfile: admin-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3009:3009"
     environment:
@@ -198,12 +238,16 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./admin-service:/app
-      - /app/node_modules
+      - ./admin-service/src:/app/admin-service/src
+      - ./packages:/app/packages
 
   # Media Service
   media-service:
-    build: ./media-service
+    build:
+      context: .
+      dockerfile: media-service/Dockerfile
+    env_file:
+      - .env
     ports:
       - "3010:3010"
     environment:
@@ -212,8 +256,8 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./media-service:/app
-      - /app/node_modules
+      - ./media-service/src:/app/media-service/src
+      - ./packages:/app/packages
       - media_uploads:/app/uploads
   gateway:
     build:

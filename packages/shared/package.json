@@ -1,0 +1,16 @@
+{
+  "name": "@bookzilla/shared",
+  "version": "1.0.0",
+  "main": "./index.js",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./middleware": "./middleware/errorHandler.js",
+    "./utils": "./utils/responseHandler.js"
+  },
+  "files": [
+    "middleware",
+    "utils",
+    "index.js"
+  ]
+}

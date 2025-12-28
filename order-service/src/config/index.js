@@ -1,15 +1,15 @@
-module.exports = {
+export default {
   port: process.env.PORT || 3000,
-  env: process.env.NODE_ENV || 'development',
+  env: process.env.NODE_ENV || "development",
   serviceName: process.env.SERVICE_NAME,
   database: {
-    url: process.env.DATABASE_URL
+    url: process.env.DATABASE_URL,
   },
   redis: {
-    url: process.env.REDIS_URL
+    url: process.env.REDIS_URL,
   },
   jwt: {
     secret: process.env.JWT_SECRET,
-    expiresIn: '7d'
-  }
+    expiresIn: "7d",
+  },
 };
