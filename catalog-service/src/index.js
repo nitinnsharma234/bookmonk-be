@@ -4,6 +4,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import { ResponseHandler } from "@bookzilla/shared";
+import { prisma } from "@bookzilla/database";
+
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,6 +15,11 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get("/books", async (req, res) => {
+  const books = await prisma.book.findMany();
+  res.json(books);
+});
 
 // Health check
 app.get("/health", (req, res) => {

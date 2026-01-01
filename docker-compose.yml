@@ -97,7 +97,7 @@ services:
     networks:
       - bookzilla-network
     volumes:
-      - ./catalog-service/src:/app/catalog-service/src
+      - ./catalog-service/:/app/catalog-service/
       - ./packages:/app/packages
 
   # Cart Service

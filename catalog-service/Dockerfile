@@ -1,5 +1,5 @@
 FROM node:18-alpine AS base
-RUN apk update && apk add --no-cache libc6-compat
+RUN apk update && apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
 # Install turbo globally
@@ -11,7 +11,6 @@ COPY . .
 # Prune the monorepo for catalog-service (this includes shared packages it depends on)
 RUN turbo prune catalog-service --docker
 
-
 # ---
 FROM base AS installer
 # Copy lockfile and package.json files
@@ -22,8 +21,11 @@ COPY --from=pruner /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Copy source code
+# Copy source code FIRST (includes Prisma schema)
 COPY --from=pruner /app/out/full/ .
+
+# NOW generate Prisma Client (schema is present)
+RUN pnpm --filter @bookzilla/database generate
 
 # Build if needed (only if you have a build step)
 # RUN pnpm turbo build --filter=catalog-service
