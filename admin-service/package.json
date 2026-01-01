@@ -23,7 +23,9 @@
     "morgan": "^1.10.0",
     "express-rate-limit": "^7.1.5",
     "express-validator": "^7.0.1",
-    "@bookzilla/shared": "workspace:*"
+    "@bookzilla/shared": "workspace:*",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",

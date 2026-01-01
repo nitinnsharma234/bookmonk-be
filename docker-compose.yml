@@ -99,6 +99,7 @@ services:
     volumes:
       - ./catalog-service/:/app/catalog-service/
       - ./packages:/app/packages
+    command: sh -c "cd /app/packages/database && npx prisma db push --skip-generate && cd /app/catalog-service && pnpm run dev"
 
   # Cart Service
   cart-service:

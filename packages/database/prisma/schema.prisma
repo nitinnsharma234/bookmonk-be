@@ -1,41 +1,116 @@
-// packages/database/prisma/schema.prisma
+// catalog-service/prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
-  // output   = "../node_modules/.prisma/client"
-//   previewFeatures = ["driverAdapters"]
-//   engineType = "binary"  // or "library"
- }
+   previewFeatures = ["multiSchema"]
+
+}
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["catalog"]
 }
 
+// Enums
+enum BookFormat {
+  HARDCOVER
+  PAPERBACK
+  EBOOK
+  AUDIOBOOK
+  
+  @@schema("catalog")
+}
+
+// Models
 model Book {
+  id              String     @id @default(uuid())
+  isbn            String?    @unique
+  isbn13          String?    @unique
+  title           String     @db.VarChar(500)
+  subtitle        String?    @db.Text
+  description     String     @db.Text
+  publisher       String?
+  publicationDate DateTime?  @db.Date
+  edition         String?
+  language        String     @default("en")
+  pageCount       Int?
+  format          BookFormat
+  price           Decimal    @db.Decimal(10, 2)
+  discountPrice   Decimal?   @db.Decimal(10, 2)
+  stockQuantity   Int        @default(0)
+  coverImageUrl   String
+  previewUrl      String?
+  averageRating   Decimal    @default(0) @db.Decimal(3, 2)
+  ratingsCount    Int        @default(0)
+  additionalInfo  Json       @default("{}")
+  isFeatured      Boolean    @default(false)
+  isActive        Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  
+  authors         BookAuthor[]
+  categories      BookCategory[]
+  
+  @@index([title])
+  @@index([isbn])
+  @@index([publisher])
+  @@index([isActive])
+  @@schema("catalog")
+}
+
+model Author {
+  id        String   @id @default(uuid())
+  name      String
+  bio       String?  @db.Text
+  photoUrl  String?
+  birthDate DateTime? @db.Date
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  books     BookAuthor[]
+  
+  @@index([name])
+  @@schema("catalog")
+}
+
+model Category {
   id          String   @id @default(uuid())
-  title       String
-  author      String
-  isbn        String   @unique
-  price       Decimal  @db.Decimal(10, 2)
-  stock       Int      @default(0)
+  name        String   @unique
+  slug        String   @unique
+  parentId    String?
+  description String?  @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  books       BookCategory[]
+  
+  @@index([slug])
+  @@schema("catalog")
 }
 
-model Order {
-  id          String   @id @default(uuid())
-  userId      String
-  totalPrice  Decimal  @db.Decimal(10, 2)
-  status      String
-  createdAt   DateTime @default(now())
-  items       OrderItem[]
+model BookAuthor {
+  bookId      String
+  authorId    String
+  authorOrder Int     @default(1)
+  
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  @@id([bookId, authorId])
+  @@schema("catalog")
 }
 
-model OrderItem {
-  id       String @id @default(uuid())
-  orderId  String
-  bookId   String
-  quantity Int
-  price    Decimal @db.Decimal(10, 2)
-  order    Order   @relation(fields: [orderId], references: [id])
+model BookCategory {
+  bookId     String
+  categoryId String
+  isPrimary  Boolean @default(false)
+  
+  book     Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  @@id([bookId, categoryId])
+  @@schema("catalog")
 }

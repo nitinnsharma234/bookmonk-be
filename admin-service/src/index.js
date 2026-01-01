@@ -3,54 +3,82 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import { ResponseHandler } from "@bookzilla/shared";
+import {
+  ResponseHandler,
+  errorHandler,
+  requestId,
+  createLogger,
+  NotFoundError,
+} from "@bookzilla/shared";
+
+// Import routes
+import bookRoutes from "./routes/bookRoutes.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3009;
+const SERVICE_NAME = process.env.SERVICE_NAME || "admin-service";
+
+// Create service logger
+const logger = createLogger({ service: SERVICE_NAME });
 
 // Middleware
 app.use(helmet());
 app.use(cors());
-app.use(morgan("dev"));
-app.use(express.json());
+app.use(requestId()); // Add request ID to all requests
+app.use(
+  morgan("combined", {
+    stream: {
+      write: (message) => logger.info(message.trim()),
+    },
+  })
+);
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Health check
+// Health check (no auth required)
 app.get("/health", (req, res) => {
   return ResponseHandler.success(res, {
     status: "healthy",
-    service: process.env.SERVICE_NAME,
+    service: SERVICE_NAME,
     timestamp: new Date().toISOString(),
   });
-  // res.status(200).json({
-  //   status: "healthy",
-  //   service: process.env.SERVICE_NAME,
-  //   timestamp: new Date().toISOString(),
-  // });
 });
 
-// Routes will be added here
+// API Routes
+app.use("/api/catalog/books", bookRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
-    error: {
-      message: err.message || "Internal Server Error",
-      status: err.status || 500,
-    },
+// 404 handler - must be before error handler
+app.use((req, res, next) => {
+  next(new NotFoundError("Route", req.originalUrl));
+});
+
+// Global error handler
+app.use(errorHandler);
+
+// Graceful shutdown handling
+const gracefulShutdown = async (signal) => {
+  logger.info(`Received ${signal}. Starting graceful shutdown...`);
+
+  server.close(() => {
+    logger.info("HTTP server closed");
+    process.exit(0);
   });
+
+  setTimeout(() => {
+    logger.error(
+      "Could not close connections in time, forcefully shutting down"
+    );
+    process.exit(1);
+  }, 10000);
+};
+
+const server = app.listen(PORT, () => {
+  logger.info(`${SERVICE_NAME} running on port ${PORT}`);
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: "Route not found" });
-});
-
-app.listen(PORT, () => {
-  console.log(`🚀 ${process.env.SERVICE_NAME} running on port ${PORT}`);
-});
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
 export default app;
