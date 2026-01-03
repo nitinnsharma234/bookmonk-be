@@ -13,3 +13,4 @@ coverage/
 .dockerignore
 .turbo
 /bookzilla/catalog-service
+CLAUDE.md

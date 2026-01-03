@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import swaggerUi from "swagger-ui-express";
 import {
   ResponseHandler,
   errorHandler,
@@ -13,6 +14,10 @@ import {
 
 // Import routes
 import bookRoutes from "./routes/bookRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+
+// Import Swagger config
+import swaggerSpec from "./config/swagger.js";
 
 dotenv.config();
 
@@ -46,8 +51,22 @@ app.get("/health", (req, res) => {
   });
 });
 
+// Swagger API Documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  explorer: true,
+  customCss: ".swagger-ui .topbar { display: none }",
+  customSiteTitle: "Admin Service API Docs",
+}));
+
+// Swagger JSON endpoint
+app.get("/api-docs.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpec);
+});
+
 // API Routes
 app.use("/api/catalog/books", bookRoutes);
+app.use("/auth", authRoutes);
 
 // 404 handler - must be before error handler
 app.use((req, res, next) => {

@@ -27,3 +27,5 @@ export {
   BadGatewayError,
   RateLimitError,
 } from "./utils/errors.js";
+
+export { generateJwtToken } from "../shared/utils/jwt.js";

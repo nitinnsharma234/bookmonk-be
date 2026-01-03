@@ -13,10 +13,7 @@ import { UnauthorizedError, ForbiddenError } from "../utils/errors.js";
  * @returns {Function} Express middleware
  */
 export const authenticateToken = (options = {}) => {
-  const {
-    secret = process.env.JWT_SECRET,
-    algorithms = ["HS256"],
-  } = options;
+  const { secret = process.env.JWT_SECRET, algorithms = ["HS256"] } = options;
 
   if (!secret) {
     throw new Error("JWT_SECRET is not configured");
@@ -32,7 +29,11 @@ export const authenticateToken = (options = {}) => {
     const parts = authHeader.split(" ");
 
     if (parts.length !== 2 || parts[0] !== "Bearer") {
-      return next(new UnauthorizedError("Invalid authorization header format. Use: Bearer <token>"));
+      return next(
+        new UnauthorizedError(
+          "Invalid authorization header format. Use: Bearer <token>"
+        )
+      );
     }
 
     const token = parts[1];
@@ -89,7 +90,9 @@ export const requireRole = (allowedRoles) => {
 
     if (!userRole || !roles.includes(userRole)) {
       return next(
-        new ForbiddenError(`Access denied. Required role: ${roles.join(" or ")}`)
+        new ForbiddenError(
+          `Access denied. Required role: ${roles.join(" or ")}`
+        )
       );
     }
 
@@ -111,10 +114,7 @@ export const requireAdmin = requireRole("admin");
  * @returns {Function} Express middleware
  */
 export const optionalAuth = (options = {}) => {
-  const {
-    secret = process.env.JWT_SECRET,
-    algorithms = ["HS256"],
-  } = options;
+  const { secret = process.env.JWT_SECRET, algorithms = ["HS256"] } = options;
 
   return (req, res, next) => {
     const authHeader = req.headers.authorization;

@@ -89,7 +89,11 @@ export class ForbiddenError extends AppError {
  */
 export class ServiceError extends AppError {
   constructor(serviceName, originalError = null) {
-    super(`Service '${serviceName}' is unavailable`, 503, "SERVICE_UNAVAILABLE");
+    super(
+      `Service '${serviceName}' is unavailable`,
+      503,
+      "SERVICE_UNAVAILABLE"
+    );
     this.serviceName = serviceName;
     this.originalError = originalError;
   }

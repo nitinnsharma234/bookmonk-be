@@ -74,11 +74,7 @@ class BookController {
     const { id } = req.params;
     await catalogService.deleteBook(id, req.requestId);
 
-    return ResponseHandler.success(
-      res,
-      null,
-      "Book deleted successfully"
-    );
+    return ResponseHandler.success(res, null, "Book deleted successfully");
   }
 }
 

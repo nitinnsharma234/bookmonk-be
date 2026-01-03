@@ -21,7 +21,7 @@ import swaggerSpec from "./config/swagger.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT =  8080;
 const SERVICE_NAME = process.env.SERVICE_NAME || "catalog-service";
 
 // Create service logger
